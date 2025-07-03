@@ -27,7 +27,7 @@ const Background3D = () => {
                     <meshStandardMaterial color="#CBC3E3" roughness={0.5} metalness={0.8} />
                 </mesh>
             </Float>
-            <OrbitControls enableZoom={false} enablePan={false} enableRotate={true} />
+            <OrbitControls enablePan={false} enableZoom={false}  enableRotate={false} />
         </Canvas>
     );
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber'; // Importamos useThree
 import { OrbitControls, Float, Sparkles, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { Dancing_Script, Lora } from 'next/font/google';
@@ -16,11 +16,30 @@ const lora = Lora({
     weight: ['400', '700'],
 });
 
+// Componente para ajustar la cámara dinámicamente
+const CameraAdjuster = () => {
+    const { camera, size } = useThree();
+    const isMobile = size.width < 768; // Define un breakpoint para móvil (ej. 768px)
+
+    useEffect(() => {
+        // Aseguramos que la cámara es una PerspectiveCamera para acceder a 'fov'
+        if (camera instanceof THREE.PerspectiveCamera) {
+            camera.position.z = isMobile ? 8 : 5; // Más lejos en móvil para que quepa, más cerca en escritorio
+            camera.fov = isMobile ? 75 : 60; // Ajusta el campo de visión para móviles si es necesario
+            camera.updateProjectionMatrix(); // Actualiza la matriz de proyección de la cámara
+        }
+    }, [isMobile, camera]);
+
+    return null;
+};
+
 const FloatingSphere = () => {
     const mesh = useRef<THREE.Mesh>(null!);
     useFrame(({ clock }) => {
         const t = clock.getElapsedTime();
         if (mesh.current) {
+            // Ajusta la amplitud del movimiento vertical para que sea más sutil en móvil si es necesario
+            // Aunque con el ajuste de cámara, esto podría no ser tan crítico.
             mesh.current.position.y = Math.sin(t * 0.4) * 0.8;
             mesh.current.rotation.y = t * 0.2;
         }
@@ -61,8 +80,6 @@ export const HeroSection = () => {
         if (canvasElement) {
             canvasElement.style.opacity = '1';
         }
-
-
     }, []);
 
     return (
@@ -105,13 +122,24 @@ export const HeroSection = () => {
             </div>
 
             <Canvas className="absolute inset-0 z-0 fade-in-canvas" shadows>
+                {/* Componente para ajustar la cámara */}
+                <CameraAdjuster />
                 <Environment preset="sunset" background={false} />
                 <ambientLight intensity={0.7} color="#FFD700" />
                 <pointLight position={[5, 5, 5]} intensity={1.5} color="#FFD700" />
                 <directionalLight position={[3, 5, 2]} intensity={1.2} color="#FFD700" />
-                <Sparkles count={50} speed={1} opacity={0.8} scale={8} size={2} color="#FFD700" />
+                <Sparkles count={200} scale={5} size={1.5} speed={0.5} opacity={0.7} color="#FFD700" />
+                <Sparkles count={100} scale={3} size={1} speed={0.3} opacity={0.5} color="#FFFFFF" />
                 <FloatingSphere />
-                <OrbitControls enablePan={false} enableZoom={false} />
+                {/* Deshabilitar todas las interacciones del usuario con OrbitControls */}
+                <OrbitControls
+                    enablePan={false}
+                    enableZoom={false}
+                    enableRotate={false} // Deshabilita la rotación con el mouse/touch
+                // Opcional: si quieres que la cámara rote automáticamente, puedes usar autoRotate
+                // autoRotate={true}
+                // autoRotateSpeed={0.5}
+                />
             </Canvas>
         </section>
     );

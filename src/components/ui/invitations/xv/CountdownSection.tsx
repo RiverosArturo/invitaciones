@@ -105,7 +105,7 @@ export const CountdownSection = ({ eventDate, backgroundImageSrc }: { eventDate:
                         {/* <FancyFloatingObject /> */}
 
                         {/* Controles de órbita para ver la escena desde diferentes ángulos (opcional para el usuario) */}
-                        <OrbitControls enableZoom={false} enablePan={false} enableRotate={true} />
+                        <OrbitControls enablePan={false} enableZoom={false}  enableRotate={false} />
                     </Suspense>
                 </Canvas>
             </div>
