@@ -1,6 +1,11 @@
 import { EnvelopeAnimation, InvitationXV } from "@/components";
 
 
+export const metadata = {
+  title: 'Invitación Digital XV Años ✨ | Muestra Plan Innovador',
+  description: 'Descubre nuestra invitación digital de XV años de muestra. Sumérgete en un diseño interactivo y funciones sorprendentes. ¡La forma más moderna de invitar a tus seres queridos a tu gran fiesta!',
+};
+
 export default function XVPage() {
   return (
     <EnvelopeAnimation>
