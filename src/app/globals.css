@@ -1,0 +1,48 @@
+@import "tailwindcss";
+/* Dancing Script ya está configurada en Tailwind y se importa aquí */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+
+/* 1. Variables globales para modo claro */
+:root {
+  --background: #FAF5FF;
+  --foreground: #222222;
+  --font-geist-sans: 'Geist', sans-serif;
+  --font-geist-mono: 'Geist Mono', monospace;
+}
+
+/* 2. Aplicar variables globales */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans);
+  @apply text-base antialiased leading-relaxed;
+}
+
+/* Define Lora con @font-face para usarla directamente en CSS */
+@font-face {
+  font-family: 'LoraCustom'; /* Le das un nombre CSS único */
+  src: url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap') format('woff2'); /* URL de Google Fonts */
+  /* Puedes agregar diferentes formatos de fuente si tienes archivos locales (.ttf, .woff, etc.)
+     Por ejemplo:
+     src: url('/fonts/Lora-Regular.woff2') format('woff2'),
+          url('/fonts/Lora-Regular.woff') format('woff');
+  */
+  font-weight: 400; /* Peso normal */
+  font-style: normal;
+  font-display: swap; /* Muestra el texto con una fuente de respaldo hasta que Lora cargue */
+}
+
+@font-face {
+  font-family: 'LoraCustom'; /* Mismo nombre de familia para el peso en negrita */
+  src: url('https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap') format('woff2');
+  font-weight: 700; /* Peso en negrita */
+  font-style: normal;
+  font-display: swap;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+} */
