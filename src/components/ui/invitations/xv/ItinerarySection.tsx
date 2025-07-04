@@ -68,7 +68,9 @@ export const ItinerarySection = ({ items }: { items: ItineraryItem[] }) => {
             ref={container}
             className={`${dancing_script.className} relative min-h-screen bg-purple-100`}
         >
-            <SparklesF />
+            <div className="absolute inset-0 z-0">
+                <SparklesF />
+            </div>
             <div className="relative z-10">
                 <h2
                     ref={titleRef}
