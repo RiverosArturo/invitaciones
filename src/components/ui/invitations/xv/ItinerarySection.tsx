@@ -6,7 +6,6 @@ import { Dancing_Script, Lora } from 'next/font/google';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SparklesF } from '@/components';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
