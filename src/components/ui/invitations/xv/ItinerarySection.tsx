@@ -72,15 +72,16 @@ export const ItinerarySection = ({ items }: { items: ItineraryItem[] }) => {
             ref={container}
             className={`${dancing_script.className} relative min-h-screen bg-purple-100`}
         >
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 pointer-events-none z-20">
                 <SparklesF />
             </div>
+            
             <div className="relative z-10">
                 <h2
                     ref={titleRef}
                     className={`text-5xl text-center mb-16 ${dancing_script.className} text-purple-900 drop-shadow-lg`}
-                    // Elimina los estilos en línea si los tienes, deja que GSAP los maneje
-                    // Asegúrate de que no haya un opacity:0 inicial en Tailwind/CSS
+                // Elimina los estilos en línea si los tienes, deja que GSAP los maneje
+                // Asegúrate de que no haya un opacity:0 inicial en Tailwind/CSS
                 >
                     Itinerario
                 </h2>
@@ -100,9 +101,8 @@ export const ItinerarySection = ({ items }: { items: ItineraryItem[] }) => {
                                     ref={(el: HTMLDivElement) => {
                                         if (el) animationItems.current[i] = el;
                                     }}
-                                    className={`relative flex items-center justify-between z-10 ${
-                                        isLeft ? 'flex-row' : 'flex-row-reverse'
-                                    }`}
+                                    className={`relative flex items-center justify-between z-10 ${isLeft ? 'flex-row' : 'flex-row-reverse'
+                                        }`}
                                 >
                                     <div className={`w-1/2 ${isLeft ? 'pr-6 text-right' : 'pl-6 text-left'}`}>
                                         <p className="text-2xl sm:text-3xl text-purple-900 leading-tight">
