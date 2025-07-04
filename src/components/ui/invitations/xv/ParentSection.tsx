@@ -18,27 +18,47 @@ interface ParentsSectionProps {
 }
 
 const CameraAdjuster = () => {
-    const { camera, size } = useThree();
-    const isMobile = size.width < 768;
+  const { camera, size } = useThree();
+  const isMobile = size.width < 768;
 
-    useEffect(() => {
-        if (camera instanceof THREE.PerspectiveCamera) {
-            camera.position.z = isMobile ? 6 : 3;
-            camera.fov = isMobile ? 85 : 75;
-            camera.updateProjectionMatrix();
-        }
-    }, [isMobile, camera]);
+  useEffect(() => {
+    if (camera instanceof THREE.PerspectiveCamera) {
+      camera.position.z = isMobile ? 6 : 3;
+      camera.fov = isMobile ? 85 : 75;
+      camera.updateProjectionMatrix();
+    }
+  }, [isMobile, camera]);
 
-    return null;
+  return null;
 };
 
-const Background3D = () => (
-    <Canvas
-        className="touch-none pointer-events-none"
-        camera={{ position: [0, 0, 3], fov: 75 }}
-        style={{ touchAction: 'none', pointerEvents: 'none' }}
-    >
-        <Suspense fallback={null}>
+export const Background3D = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [canRender, setCanRender] = useState(false);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) {
+        setCanRender(true);
+      }
+    });
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 z-0">
+      {canRender && (
+        <Canvas
+          className="pointer-events-none"
+          camera={{ position: [0, 0, 3], fov: 75 }}
+          style={{ touchAction: 'none', pointerEvents: 'none' }}
+        >
+          <Suspense fallback={null}>
             <CameraAdjuster />
             <ambientLight intensity={0.6} />
             <pointLight position={[10, 10, 10]} intensity={1.2} />
@@ -46,10 +66,12 @@ const Background3D = () => (
             <Sparkles count={150} scale={5} size={1.5} speed={0.5} opacity={0.7} color="#FFD700" />
             <Sparkles count={75} scale={3} size={1} speed={0.3} opacity={0.5} color="#FFFFFF" />
             <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
-        </Suspense>
-    </Canvas>
-);
-
+          </Suspense>
+        </Canvas>
+      )}
+    </div>
+  );
+};
 export const ParentsSection: React.FC<ParentsSectionProps> = ({
     mainMessage = "¡Celebra con nosotros este día tan maravilloso!",
     parentsTitle = "Mis Padres",
