@@ -20,23 +20,27 @@ export const ItinerarySection = ({ items }: { items: ItineraryItem[] }) => {
 
     useGSAP(
         () => {
-            if (!titleRef.current || !animationItems.current.length) return;
-
-            // Título
+            // Animación del título
             gsap.from(titleRef.current, {
+                // No establecemos opacity: 0 aquí. GSAP lo establecerá si es necesario.
                 y: -50,
-                opacity: 0,
+                opacity: 0, // <-- Mantenemos la opacidad inicial a 0 aquí para que la animación la maneje
                 duration: 1.5,
                 ease: 'power4.out',
                 scrollTrigger: {
                     trigger: titleRef.current,
-                    start: 'top 90%',
+                    start: 'top 85%', // O ajusta este valor si prefieres que aparezca antes/después
+                    // Marcamos "once: true" para que la animación solo se ejecute una vez
+                    // y el elemento se quede en su estado final (visible)
                     once: true,
-                    immediateRender: false,
+                    // Si el elemento ya está en el viewport cuando la página carga,
+                    // esto asegura que se muestre inmediatamente.
+                    // Si "start" ya pasó, la animación se ejecutará inmediatamente.
+                    immediateRender: true, // Esto es clave
                 },
             });
 
-            // Elementos
+            // Animación de los elementos del itinerario
             animationItems.current.forEach((item, i) => {
                 const isLeft = i % 2 === 0;
                 const direction = isLeft ? -100 : 100;
@@ -51,9 +55,9 @@ export const ItinerarySection = ({ items }: { items: ItineraryItem[] }) => {
                         ease: 'power3.out',
                         scrollTrigger: {
                             trigger: item,
-                            start: 'top 90%',
-                            once: true,
-                            immediateRender: false,
+                            start: 'top 85%',
+                            once: true, // También importante para que se quede visible
+                            immediateRender: true,
                         },
                     }
                 );
@@ -75,8 +79,8 @@ export const ItinerarySection = ({ items }: { items: ItineraryItem[] }) => {
                 <h2
                     ref={titleRef}
                     className={`text-5xl text-center mb-16 ${dancing_script.className} text-purple-900 drop-shadow-lg`}
-                // Elimina los estilos en línea si los tienes, deja que GSAP los maneje
-                // Asegúrate de que no haya un opacity:0 inicial en Tailwind/CSS
+                    // Elimina los estilos en línea si los tienes, deja que GSAP los maneje
+                    // Asegúrate de que no haya un opacity:0 inicial en Tailwind/CSS
                 >
                     Itinerario
                 </h2>
@@ -96,8 +100,9 @@ export const ItinerarySection = ({ items }: { items: ItineraryItem[] }) => {
                                     ref={(el: HTMLDivElement) => {
                                         if (el) animationItems.current[i] = el;
                                     }}
-                                    className={`relative flex items-center justify-between z-10 ${isLeft ? 'flex-row' : 'flex-row-reverse'
-                                        }`}
+                                    className={`relative flex items-center justify-between z-10 ${
+                                        isLeft ? 'flex-row' : 'flex-row-reverse'
+                                    }`}
                                 >
                                     <div className={`w-1/2 ${isLeft ? 'pr-6 text-right' : 'pl-6 text-left'}`}>
                                         <p className="text-2xl sm:text-3xl text-purple-900 leading-tight">
