@@ -8,7 +8,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Dancing_Script, Montserrat } from 'next/font/google';
 import { FaMapMarkerAlt } from 'react-icons/fa';
-import { SparklesF } from '@/components';
 
 const dancing_script = Dancing_Script({ subsets: ['latin'], weight: ['400', '700'] });
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['300', '400', '700'] });
@@ -66,7 +65,7 @@ export const LocationsSection = ({ locations }: LocationsSectionProps) => {
       id="ceremonia"
       className="relative px-4 overflow-hidden bg-gradient-to-b from-purple-100 to-purple-300 pb-10"
     >
-      <SparklesF />
+      {/* <SparklesF /> */}
 
       <div className="relative z-10">
         <h2
