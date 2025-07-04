@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Float, Sparkles } from '@react-three/drei';
 import gsap from 'gsap';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, Suspense } from 'react'; // Added Suspense and useEffect
 import { useGSAP } from '@gsap/react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -14,20 +14,41 @@ interface GuestSectionProps {
     guestName?: string;
     passes?: number;
 }
+
 // Componente para la escena 3D de fondo
+// Se envuelve en Suspense para manejar la carga asíncrona
 const Background3D = () => {
     return (
-        <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-            <ambientLight intensity={1.5} />
-            <pointLight position={[10, 10, 10]} intensity={1} />
-            <Sparkles count={200} scale={10} size={1} speed={0.5} color="#FFD700" noise={0.5} />
-            <Float speed={1.5} rotationIntensity={1} floatIntensity={1}>
+        <Canvas 
+            camera={{ position: [0, 0, 5], fov: 75 }}
+            flat // Renderizado plano, menos cálculos de luz
+            linear // Tono de mapeo lineal
+            dpr={[1, 1.5]} // Limita el Device Pixel Ratio para móviles (ej: 1 o 1.5 en vez de 2 o 3)
+            performance={{ min: 0.5, max: 1 }} // Ajusta la calidad de rendimiento
+        >
+            <ambientLight intensity={1.0} /> {/* Reducir un poco la intensidad si es posible */}
+            <pointLight position={[10, 10, 10]} intensity={0.8} /> {/* Reducir intensidad */}
+            <Sparkles 
+                count={100} // Reducido de 200 a 100
+                scale={8} // Reducido ligeramente la escala
+                size={0.8} // Reducido ligeramente el tamaño
+                speed={0.4} // Reducido ligeramente la velocidad
+                color="#FFD700" 
+                noise={0.3} // Reducido el ruido
+            />
+            <Float speed={1.2} rotationIntensity={0.8} floatIntensity={0.8}> {/* Valores ligeramente reducidos */}
                 <mesh>
                     <dodecahedronGeometry args={[0.5]} />
-                    <meshStandardMaterial color="#CBC3E3" roughness={0.5} metalness={0.8} />
+                    {/* Material con menos complejidad o uso de "flatShading" */}
+                    <meshStandardMaterial 
+                        color="#CBC3E3" 
+                        roughness={0.7} // Aumentar un poco para reducir el brillo y los cálculos
+                        metalness={0.5} // Reducir metalness si no es crítico
+                        flatShading // Puede mejorar el rendimiento, pero cambia el aspecto
+                    />
                 </mesh>
             </Float>
-            <OrbitControls enablePan={false} enableZoom={false}  enableRotate={false} />
+            <OrbitControls enablePan={false} enableZoom={false} enableRotate={false} />
         </Canvas>
     );
 };
@@ -35,17 +56,29 @@ const Background3D = () => {
 export const GuestsSection = ({ guestName = "Familia Invitada", passes = 1 }: GuestSectionProps) => {
     const sectionRef = useRef<HTMLElement>(null);
     const cardRef = useRef<HTMLDivElement>(null);
-    // const mensaje = encodeURIComponent(`Hola, me interesa una cotización para una invitación.`);
-    // const url = `https://wa.me/5212311392413?text=${mensaje}`;
     const urlForm = '/invitaciones/xv#formulario';
     const [showQr, setShowQr] = useState(false);
     const qrValue = `https://www.rhsolutionsmx.com`;
+
+    // Estado para controlar si se debe renderizar el 3D
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkIsMobile = () => {
+            // Considera "móvil" si el ancho de la ventana es menor a un cierto umbral
+            setIsMobile(window.innerWidth < 768); 
+        };
+
+        checkIsMobile(); // Comprobar al montar
+        window.addEventListener('resize', checkIsMobile); // Escuchar cambios de tamaño
+
+        return () => window.removeEventListener('resize', checkIsMobile);
+    }, []);
 
     useGSAP(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    // Animación de entrada de la tarjeta
                     gsap.fromTo(cardRef.current, {
                         y: 50,
                         opacity: 0,
@@ -58,7 +91,6 @@ export const GuestsSection = ({ guestName = "Familia Invitada", passes = 1 }: Gu
                         ease: 'power3.out',
                         delay: 0.5,
                         onComplete: () => {
-                            // Animación de brillo usando la opacidad de la sombra
                             gsap.to(cardRef.current, {
                                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 50px rgba(183, 110, 121, 1)',
                                 duration: 0.5,
@@ -66,7 +98,6 @@ export const GuestsSection = ({ guestName = "Familia Invitada", passes = 1 }: Gu
                                 repeat: 1,
                                 ease: 'power2.inOut',
                                 onReverseComplete: () => {
-                                    // Restaura la sombra al estado original después del brillo
                                     gsap.set(cardRef.current, {
                                         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
                                     });
@@ -91,7 +122,6 @@ export const GuestsSection = ({ guestName = "Familia Invitada", passes = 1 }: Gu
         };
     }, []);
 
-    // NOTA: La sombra inicial ahora está en el className
     const cardClasses = `
         relative z-10 w-full max-w-lg mx-auto p-10 text-center shadow-2xl space-y-8
         transition-all duration-500 transform-gpu rounded-3xl
@@ -119,9 +149,21 @@ export const GuestsSection = ({ guestName = "Familia Invitada", passes = 1 }: Gu
                 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;700&display=swap');
             `}</style>
 
-            <div className="absolute inset-0 z-0">
-                <Background3D />
-            </div>
+            {/* Carga condicional del componente 3D */}
+            {!isMobile && (
+                <div className="absolute inset-0 z-0">
+                    <Suspense fallback={null}> {/* Suspense para una mejor experiencia de carga */}
+                        <Background3D />
+                    </Suspense>
+                </div>
+            )}
+            {/* Si es móvil, se podría cargar una imagen de fondo estática o un video ligero en su lugar */}
+            {isMobile && (
+                 <div className="absolute inset-0 z-0">
+                    {/* Puedes poner una imagen estática de fondo para móviles si no se renderiza el 3D */}
+                    <div className="absolute inset-0 bg-purple-400 opacity-20"></div>
+                 </div>
+            )}
 
             <div className="absolute inset-0 z-1 pointer-events-none">
                 <Image
@@ -168,7 +210,6 @@ export const GuestsSection = ({ guestName = "Familia Invitada", passes = 1 }: Gu
                                 exit={{ opacity: 0, scale: 0.8 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                {/* ¡Aquí llamas a tu componente QrDisplay! */}
                                 <QrDisplay value={qrValue} size={256} bgColor="#FFFFFF" fgColor="#3a005d" />
                             </motion.div>
                         )}

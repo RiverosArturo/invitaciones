@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber'; // Importamos useThree
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Float, Sparkles, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { Dancing_Script, Lora } from 'next/font/google';
@@ -22,11 +22,13 @@ const CameraAdjuster = () => {
     const isMobile = size.width < 768; // Define un breakpoint para móvil (ej. 768px)
 
     useEffect(() => {
-        // Aseguramos que la cámara es una PerspectiveCamera para acceder a 'fov'
         if (camera instanceof THREE.PerspectiveCamera) {
-            camera.position.z = isMobile ? 8 : 5; // Más lejos en móvil para que quepa, más cerca en escritorio
-            camera.fov = isMobile ? 75 : 60; // Ajusta el campo de visión para móviles si es necesario
-            camera.updateProjectionMatrix(); // Actualiza la matriz de proyección de la cámara
+            // Ajuste fino para móviles:
+            // Alejar un poco más la cámara si las Sparkles no se ven bien,
+            // o ajustar el FOV para que abarquen más espacio.
+            camera.position.z = isMobile ? 7 : 5; // Antes 8, ahora 7 (un poco más cerca para ver las sparkles)
+            camera.fov = isMobile ? 80 : 60; // Aumentar FOV en móvil para un campo de visión más amplio
+            camera.updateProjectionMatrix();
         }
     }, [isMobile, camera]);
 
@@ -38,8 +40,6 @@ const FloatingSphere = () => {
     useFrame(({ clock }) => {
         const t = clock.getElapsedTime();
         if (mesh.current) {
-            // Ajusta la amplitud del movimiento vertical para que sea más sutil en móvil si es necesario
-            // Aunque con el ajuste de cámara, esto podría no ser tan crítico.
             mesh.current.position.y = Math.sin(t * 0.4) * 0.8;
             mesh.current.rotation.y = t * 0.2;
         }
@@ -48,7 +48,8 @@ const FloatingSphere = () => {
     return (
         <Float floatIntensity={0.5} speed={1.5}>
             <mesh ref={mesh}>
-                <sphereGeometry args={[1, 64, 64]} />
+                {/* Mantener la geometría reducida para rendimiento en móvil */}
+                <sphereGeometry args={[1, 32, 32]} /> {/* Ya lo habíamos ajustado a 32,32 */}
                 <meshStandardMaterial
                     color="#FFFACD"
                     metalness={0.8}
@@ -68,7 +69,7 @@ export const HeroSection = () => {
     useEffect(() => {
         if (heroRef.current) {
             heroRef.current.style.opacity = '1';
-            heroRef.current.style.transform = 'none'; // Quita cualquier transformación
+            heroRef.current.style.transform = 'none';
         }
         textRefs.current.forEach(el => {
             if (el) {
@@ -122,23 +123,35 @@ export const HeroSection = () => {
             </div>
 
             <Canvas className="absolute inset-0 z-0 fade-in-canvas" shadows>
-                {/* Componente para ajustar la cámara */}
                 <CameraAdjuster />
                 <Environment preset="sunset" background={false} />
-                <ambientLight intensity={0.7} color="#FFD700" />
-                <pointLight position={[5, 5, 5]} intensity={1.5} color="#FFD700" />
-                <directionalLight position={[3, 5, 2]} intensity={1.2} color="#FFD700" />
-                <Sparkles count={200} scale={5} size={1.5} speed={0.5} opacity={0.7} color="#FFD700" />
-                <Sparkles count={100} scale={3} size={1} speed={0.3} opacity={0.5} color="#FFFFFF" />
+                {/* Aumentar la intensidad de las luces para que las sparkles sean más brillantes */}
+                <ambientLight intensity={1.0} color="#FFD700" /> {/* Antes 0.7 */}
+                <pointLight position={[5, 5, 5]} intensity={2.0} color="#FFD700" /> {/* Antes 1.5 */}
+                <directionalLight position={[3, 5, 2]} intensity={1.5} color="#FFD700" /> {/* Antes 1.2 */}
+                
+                {/* Ajustar parámetros de Sparkles para mayor visibilidad */}
+                <Sparkles 
+                    count={300}    // Aumentar el conteo para mayor densidad
+                    scale={7}      // Aumentar el área de dispersión
+                    size={2.5}     // Hacer las partículas individuales más grandes
+                    speed={0.7}    // Ajustar velocidad
+                    opacity={0.9}  // Hacerlas más opacas
+                    color="#FFD700" 
+                />
+                <Sparkles 
+                    count={150}    // Aumentar el conteo
+                    scale={5}      // Aumentar el área
+                    size={2}       // Hacer las partículas individuales más grandes
+                    speed={0.4}    // Ajustar velocidad
+                    opacity={0.8}  // Hacerlas más opacas
+                    color="#FFFFFF" 
+                />
                 <FloatingSphere />
-                {/* Deshabilitar todas las interacciones del usuario con OrbitControls */}
                 <OrbitControls
                     enablePan={false}
                     enableZoom={false}
-                    enableRotate={false} // Deshabilita la rotación con el mouse/touch
-                // Opcional: si quieres que la cámara rote automáticamente, puedes usar autoRotate
-                // autoRotate={true}
-                // autoRotateSpeed={0.5}
+                    enableRotate={false}
                 />
             </Canvas>
         </section>
