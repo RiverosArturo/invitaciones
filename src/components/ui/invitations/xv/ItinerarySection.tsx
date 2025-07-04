@@ -6,6 +6,7 @@ import { Dancing_Script, Lora } from 'next/font/google';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SparklesF } from '@/components';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -71,6 +72,7 @@ export const ItinerarySection = ({ items }: { items: ItineraryItem[] }) => {
             ref={container}
             className={`${dancing_script.className} relative min-h-screen bg-purple-100`}
         >
+            <SparklesF />
             <div className="relative z-10">
                 <h2
                     ref={titleRef}

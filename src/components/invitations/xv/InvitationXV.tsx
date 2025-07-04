@@ -117,9 +117,7 @@ export const InvitationXV = () => {
                 godparent1Name="Elida Navarro"
                 godparent2Name="Carlos López"
             />
-            <SparklesF />
             <ItinerarySection items={itineraryItems} />
-            <SparklesF />
             <LocationsSection locations={locations} />
             <LodgingSection images={hotelImages} />
             <DressCodeSection />
