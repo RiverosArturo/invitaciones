@@ -4,7 +4,7 @@ import { GrGallery } from "react-icons/gr";
 import { BiDrink } from "react-icons/bi";
 import { GiMusicalScore, GiPartyPopper } from "react-icons/gi";
 import { Gift, HotelImage, ItineraryItem, LocationItem } from '@/interfaces';
-import { CountdownSection, DressCodeSection, GallerySection, GiftRegistrySection, GuestsSection, HeroSection, ItinerarySection, LocationsSection, LodgingSection, ParentsSection, RSVPSection, ShareOnSocialsSection } from '@/components';
+import { CountdownSection, DressCodeSection, GallerySection, GiftRegistrySection, GuestsSection, HeroSection, ItinerarySection, LocationsSection, LodgingSection, ParentsSection, RSVPSection, ShareOnSocialsSection, SparklesF } from '@/components';
 
 
 
@@ -117,7 +117,9 @@ export const InvitationXV = () => {
                 godparent1Name="Elida Navarro"
                 godparent2Name="Carlos López"
             />
+            <SparklesF />
             <ItinerarySection items={itineraryItems} />
+            <SparklesF />
             <LocationsSection locations={locations} />
             <LodgingSection images={hotelImages} />
             <DressCodeSection />

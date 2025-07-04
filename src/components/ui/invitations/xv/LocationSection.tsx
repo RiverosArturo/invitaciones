@@ -66,8 +66,6 @@ export const LocationsSection = ({ locations }: LocationsSectionProps) => {
       id="ceremonia"
       className="relative px-4 overflow-hidden bg-gradient-to-b from-purple-100 to-purple-300 pb-10"
     >
-      <SparklesF />
-
       <div className="relative z-10">
         <h2
           ref={titleRef}
