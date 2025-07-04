@@ -2,9 +2,10 @@
 
 import { OrbitControls, Sparkles } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as THREE from 'three';
 
+// Ajusta la cámara según tamaño de pantalla
 const CameraAdjuster = () => {
   const { camera, size } = useThree();
   const isMobile = size.width < 768;
@@ -15,29 +16,46 @@ const CameraAdjuster = () => {
       camera.fov = isMobile ? 85 : 75;
       camera.updateProjectionMatrix();
     }
-  }, [isMobile, camera]);
+  }, [camera, size]);
 
   return null;
 };
 
 export const SparklesF = () => {
+  const [isClient, setIsClient] = useState(false);
+
+  // Asegura que solo se renderice en cliente (no SSR)
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
+
   return (
     <Canvas
-      className="absolute inset-0 z-0 touch-none pointer-events-none"
-      style={{ touchAction: 'none', pointerEvents: 'none' }}
+      className="absolute inset-0 z-10 pointer-events-none"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        pointerEvents: 'none',
+        touchAction: 'none',
+        zIndex: 10,
+      }}
       camera={{ position: [0, 0, 5], fov: 75 }}
+      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
     >
       <CameraAdjuster />
 
-      <ambientLight intensity={2.0} />
-
+      <ambientLight intensity={1.5} />
+      
       <Sparkles
-        count={200}
-        scale={18}
-        size={2.5}
-        speed={1.2}
+        count={150}
+        scale={14}
+        size={2.2}
+        speed={0.9}
         color="#FFD700"
-        noise={1.0}
+        noise={0.8}
       />
 
       <OrbitControls enablePan={false} enableZoom={false} enableRotate={false} />
