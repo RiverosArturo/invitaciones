@@ -1,33 +1,22 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Float, Sparkles, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { Dancing_Script, Lora } from 'next/font/google';
 
-const dancing_script = Dancing_Script({
-    subsets: ['latin'],
-    weight: ['400', '700'],
-});
+const dancing_script = Dancing_Script({ subsets: ['latin'], weight: ['400', '700'] });
+const lora = Lora({ subsets: ['latin'], weight: ['400', '700'] });
 
-const lora = Lora({
-    subsets: ['latin'],
-    weight: ['400', '700'],
-});
-
-// Componente para ajustar la cámara dinámicamente
 const CameraAdjuster = () => {
     const { camera, size } = useThree();
-    const isMobile = size.width < 768; // Define un breakpoint para móvil (ej. 768px)
+    const isMobile = size.width < 768;
 
     useEffect(() => {
         if (camera instanceof THREE.PerspectiveCamera) {
-            // Ajuste fino para móviles:
-            // Alejar un poco más la cámara si las Sparkles no se ven bien,
-            // o ajustar el FOV para que abarquen más espacio.
-            camera.position.z = isMobile ? 7 : 5; // Antes 8, ahora 7 (un poco más cerca para ver las sparkles)
-            camera.fov = isMobile ? 80 : 60; // Aumentar FOV en móvil para un campo de visión más amplio
+            camera.position.z = isMobile ? 8 : 5;
+            camera.fov = isMobile ? 80 : 60;
             camera.updateProjectionMatrix();
         }
     }, [isMobile, camera]);
@@ -48,8 +37,7 @@ const FloatingSphere = () => {
     return (
         <Float floatIntensity={0.5} speed={1.5}>
             <mesh ref={mesh}>
-                {/* Mantener la geometría reducida para rendimiento en móvil */}
-                <sphereGeometry args={[1, 32, 32]} /> {/* Ya lo habíamos ajustado a 32,32 */}
+                <sphereGeometry args={[1, 32, 32]} />
                 <meshStandardMaterial
                     color="#FFFACD"
                     metalness={0.8}
@@ -80,6 +68,8 @@ export const HeroSection = () => {
         const canvasElement = document.querySelector('.fade-in-canvas') as HTMLElement;
         if (canvasElement) {
             canvasElement.style.opacity = '1';
+            canvasElement.style.pointerEvents = 'none';
+            canvasElement.style.touchAction = 'none';
         }
     }, []);
 
@@ -91,30 +81,24 @@ export const HeroSection = () => {
         >
             <div className="z-10 text-center space-y-4 pt-12">
                 <h1
-                    ref={(el: HTMLHeadingElement | null) => {
-                        if (el) {
-                            textRefs.current[0] = el;
-                        }
+                    ref={(el) => {
+                        if (el) textRefs.current[0] = el;
                     }}
                     className={`${dancing_script.className} text-6xl sm:text-7xl font-bold tracking-wide leading-tight drop-shadow-md`}
                 >
                     Mis XV Años
                 </h1>
                 <h2
-                    ref={(el: HTMLHeadingElement | null) => {
-                        if (el) {
-                            textRefs.current[1] = el;
-                        }
+                    ref={(el) => {
+                        if (el) textRefs.current[1] = el;
                     }}
                     className={`${dancing_script.className} text-5xl sm:text-7xl tracking-wide leading-tight drop-shadow-md`}
                 >
                     Mariana Esparza
                 </h2>
                 <h3
-                    ref={(el: HTMLHeadingElement | null) => {
-                        if (el) {
-                            textRefs.current[2] = el;
-                        }
+                    ref={(el) => {
+                        if (el) textRefs.current[2] = el;
                     }}
                     className={`${lora.className} text-lg sm:text-xl font-light tracking-widest uppercase mt-4 opacity-80 drop-shadow-sm`}
                 >
@@ -122,37 +106,16 @@ export const HeroSection = () => {
                 </h3>
             </div>
 
-            <Canvas className="absolute inset-0 z-0 fade-in-canvas" shadows>
+            <Canvas className="absolute inset-0 z-0 fade-in-canvas" style={{ touchAction: 'none', pointerEvents: 'none' }} shadows>
                 <CameraAdjuster />
                 <Environment preset="sunset" background={false} />
-                {/* Aumentar la intensidad de las luces para que las sparkles sean más brillantes */}
-                <ambientLight intensity={1.0} color="#FFD700" /> {/* Antes 0.7 */}
-                <pointLight position={[5, 5, 5]} intensity={2.0} color="#FFD700" /> {/* Antes 1.5 */}
-                <directionalLight position={[3, 5, 2]} intensity={1.5} color="#FFD700" /> {/* Antes 1.2 */}
-                
-                {/* Ajustar parámetros de Sparkles para mayor visibilidad */}
-                <Sparkles 
-                    count={300}    // Aumentar el conteo para mayor densidad
-                    scale={7}      // Aumentar el área de dispersión
-                    size={2.5}     // Hacer las partículas individuales más grandes
-                    speed={0.7}    // Ajustar velocidad
-                    opacity={0.9}  // Hacerlas más opacas
-                    color="#FFD700" 
-                />
-                <Sparkles 
-                    count={150}    // Aumentar el conteo
-                    scale={5}      // Aumentar el área
-                    size={2}       // Hacer las partículas individuales más grandes
-                    speed={0.4}    // Ajustar velocidad
-                    opacity={0.8}  // Hacerlas más opacas
-                    color="#FFFFFF" 
-                />
+                <ambientLight intensity={1.0} color="#FFD700" />
+                <pointLight position={[5, 5, 5]} intensity={2.0} color="#FFD700" />
+                <directionalLight position={[3, 5, 2]} intensity={1.5} color="#FFD700" />
+                <Sparkles count={300} scale={7} size={2.5} speed={0.7} opacity={0.9} color="#FFD700" />
+                <Sparkles count={150} scale={5} size={2} speed={0.4} opacity={0.8} color="#FFFFFF" />
                 <FloatingSphere />
-                <OrbitControls
-                    enablePan={false}
-                    enableZoom={false}
-                    enableRotate={false}
-                />
+                <OrbitControls enablePan={false} enableZoom={false} enableRotate={false} />
             </Canvas>
         </section>
     );
