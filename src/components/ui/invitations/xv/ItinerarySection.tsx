@@ -69,7 +69,7 @@ export const ItinerarySection = ({ items }: { items: ItineraryItem[] }) => {
         <section
             id="itinerario"
             ref={container}
-            className={`${dancing_script.className} relative min-h-screen bg-purple-100`}
+            className={`${dancing_script.className} relative min-h-screen bg-purple-100 pt-24`}
         >
             {/* <SparklesF /> */}
             <div className="relative z-10">

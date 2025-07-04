@@ -63,7 +63,7 @@ export const LocationsSection = ({ locations }: LocationsSectionProps) => {
     <section
       ref={sectionRef}
       id="ceremonia"
-      className="relative px-4 overflow-hidden bg-gradient-to-b from-purple-100 to-purple-300 pb-10"
+      className="relative px-4 overflow-hidden bg-gradient-to-b from-purple-100 to-purple-300 pb-10 pt-24"
     >
       {/* <SparklesF /> */}
 
