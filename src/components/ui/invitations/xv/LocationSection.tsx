@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { LocationItem } from '@/interfaces';
 import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
@@ -25,6 +25,8 @@ export const LocationsSection = ({ locations }: LocationsSectionProps) => {
   const locationsGridRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
+    if (!titleRef.current || !locationsGridRef.current) return;
+
     gsap.fromTo(
       titleRef.current,
       { opacity: 0, y: -50 },
@@ -42,7 +44,7 @@ export const LocationsSection = ({ locations }: LocationsSectionProps) => {
     );
 
     gsap.fromTo(
-      locationsGridRef.current?.children || '',
+      locationsGridRef.current.children,
       { opacity: 0, y: 50, scale: 0.95 },
       {
         opacity: 1,
@@ -58,6 +60,14 @@ export const LocationsSection = ({ locations }: LocationsSectionProps) => {
         },
       }
     );
+  }, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 300);
+
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
@@ -96,6 +106,9 @@ export const LocationsSection = ({ locations }: LocationsSectionProps) => {
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
                   className="object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
+                  priority={i === 0}
+                  placeholder="blur"
+                  blurDataURL="/placeholder.png" // Puedes poner una base64 o un fallback local
                 />
               </div>
 
