@@ -1,15 +1,32 @@
+/* HeroSection.tsx */
 'use client';
 
 import React, { Suspense, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, Sparkles, Environment, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
 import { Dancing_Script, Lora } from 'next/font/google';
 
-const dancing_script = Dancing_Script({ subsets: ['latin'], weight: ['400', '700'] });
-const lora = Lora({ subsets: ['latin'], weight: ['400', '700'] });
+const dancingScript = Dancing_Script({ subsets: ['latin'], weight: ['400', '700'] });
+const lora          = Lora({ subsets: ['latin'],  weight: ['400', '700'] });
 
-/* --------- Escena --------- */
+/* ---------- Cámara adaptativa ---------- */
+const CameraAdjuster = () => {
+  const { camera, size } = useThree();
+  const isMobile = size.width < 768;
+
+  React.useEffect(() => {
+    if (camera instanceof THREE.PerspectiveCamera) {
+      camera.position.set(0, 0, isMobile ? 10 : 5);
+      camera.fov = isMobile ? 90 : 60;
+      camera.updateProjectionMatrix();
+    }
+  }, [isMobile, camera]);
+
+  return null;
+};
+
+/* ---------- Esfera flotante ---------- */
 const FloatingSphere = () => {
   const mesh = useRef<THREE.Mesh>(null!);
 
@@ -35,12 +52,11 @@ const FloatingSphere = () => {
   );
 };
 
-/* --------- Componente principal --------- */
+/* ---------- Componente principal ---------- */
 export const HeroSection = () => {
-  const heroRef = useRef<HTMLDivElement>(null);
+  const heroRef  = useRef<HTMLDivElement>(null);
   const textRefs = useRef<HTMLHeadingElement[]>([]);
   const [dpr, setDpr] = useState<[number, number]>([1, 2]);
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   return (
     <section
@@ -51,11 +67,11 @@ export const HeroSection = () => {
       {/* Texto */}
       <div className="z-10 text-center space-y-4 pt-12">
         <h1 ref={el => { if (el) textRefs.current[0] = el; }}
-            className={`${dancing_script.className} text-5xl sm:text-6xl md:text-7xl font-bold tracking-wide leading-tight drop-shadow-md`}>
-          Mis XV Años
+            className={`${dancingScript.className} text-5xl sm:text-6xl md:text-7xl font-bold tracking-wide leading-tight drop-shadow-md`}>
+          Mis XV Años
         </h1>
         <h2 ref={el => { if (el) textRefs.current[1] = el; }}
-            className={`${dancing_script.className} text-4xl sm:text-6xl md:text-7xl tracking-wide leading-tight drop-shadow-md`}>
+            className={`${dancingScript.className} text-4xl sm:text-6xl md:text-7xl tracking-wide leading-tight drop-shadow-md`}>
           Mariana Esparza
         </h2>
         <h3 ref={el => { if (el) textRefs.current[2] = el; }}
@@ -64,30 +80,29 @@ export const HeroSection = () => {
         </h3>
       </div>
 
-      {/* Canvas 3D */}
+      {/* Canvas 3D */}
       <Canvas
         className="absolute inset-0 z-0 touch-none pointer-events-none"
-        /* limita el pixel‑ratio para móviles */
-        dpr={dpr}
-        /* antialias desactivado (suficiente con DPR 2) */
-        gl={{ antialias: false, alpha: true }}
-        /* bucle sólo cuando cambie algo */
-        frameloop="demand"
-        /* cámara reactiva al tamaño inicial */
-        camera={{ position: [0, 0, isMobile ? 10 : 5], fov: isMobile ? 90 : 60 }}
+        dpr={dpr}                              /* limita pixel‑ratio */
+        gl={{ antialias: false, alpha: true }} /* sin AA, fondo transparente */
+        frameloop="demand"                    /* render bajo demanda */
+        camera={{ position: [0, 0, 5], fov: 60 }} /* se ajustará en CameraAdjuster */
       >
         <PerformanceMonitor
-          onDecline={() => setDpr([1, 1.5])}  /* baja aún más si va justo */
+          onDecline={() => setDpr([1, 1.5])}
           onIncline={() => setDpr([1, 2])}
         />
         <Suspense fallback={null}>
+          <CameraAdjuster />
           <Environment preset="sunset" background={false} />
           <ambientLight intensity={1} color="#FFD700" />
           <pointLight position={[5, 5, 5]} intensity={2} color="#FFD700" />
           <directionalLight position={[3, 5, 2]} intensity={1.5} color="#FFD700" />
-          {/* Efectos */}
+
+          {/* Partículas */}
           <Sparkles count={200} scale={6} size={2.2} speed={0.6} opacity={0.7} color="#FFD700" />
           <Sparkles count={100} scale={4} size={1.8} speed={0.5} opacity={0.6} color="#FFFFFF" />
+
           <FloatingSphere />
         </Suspense>
       </Canvas>
