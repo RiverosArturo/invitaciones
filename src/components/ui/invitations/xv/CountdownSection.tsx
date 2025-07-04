@@ -34,7 +34,7 @@ const CameraAdjuster = () => {
 
 const Background3D = () => (
   <Canvas
-    className="absolute inset-0 z-0 touch-none pointer-events-none"
+    className="absolute inset-0 z-0 pointer-events-none touch-none"
     style={{ touchAction: 'none', pointerEvents: 'none' }}
     camera={{ position: [0, 0, 3], fov: 75 }}
   >
@@ -50,12 +50,24 @@ const Background3D = () => (
   </Canvas>
 );
 
-export const CountdownSection = ({ eventDate, backgroundImageSrc }: { eventDate: Date; backgroundImageSrc: string }) => {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>({ dias: 0, horas: 0, minutos: 0, segundos: 0 });
+export const CountdownSection = ({
+  eventDate,
+  backgroundImageSrc,
+}: {
+  eventDate: Date;
+  backgroundImageSrc: string;
+}) => {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    dias: 0,
+    horas: 0,
+    minutos: 0,
+    segundos: 0,
+  });
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const countdownRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Actualizar cuenta regresiva
   useEffect(() => {
     const updateCountdown = () => {
       const diff = eventDate.getTime() - Date.now();
@@ -72,7 +84,12 @@ export const CountdownSection = ({ eventDate, backgroundImageSrc }: { eventDate:
     return () => clearInterval(id);
   }, [eventDate]);
 
+  // Animaciones GSAP: solo cuando refs estén definidos y el componente visible
   useGSAP(() => {
+    if (!sectionRef.current) return;
+    if (!titleRef.current) return;
+    if (!countdownRefs.current.length) return;
+
     gsap.set(titleRef.current, { opacity: 0, y: -50 });
     countdownRefs.current.forEach((el) => {
       if (el) {
@@ -125,16 +142,16 @@ export const CountdownSection = ({ eventDate, backgroundImageSrc }: { eventDate:
           {Object.entries(timeLeft).map(([unit, val], i) => (
             <div
               key={unit}
-              ref={(el) => { countdownRefs.current[i] = el; }}
-              className="flex flex-col items-center bg-gradient-to-br from-purple-500 to-[#F8F6F4] rounded-xl p-4 sm:p-6 shadow-md transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
+              ref={(el) => {
+                countdownRefs.current[i] = el;
+              }}
+              className="flex flex-col items-center bg-gradient-to-br from-purple-500 to-[#F8F6F4] rounded-xl p-4 sm:p-6 shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg"
               style={{ border: '2px solid rgba(139, 92, 246, 0.5)' }}
             >
               <span className="text-3xl sm:text-4xl text-purple-900 font-extrabold mb-2 leading-none tracking-tighter">
                 {val.toString().padStart(2, '0')}
               </span>
-              <span className="text-lg sm:text-xl text-purple-700 capitalize tracking-wide">
-                {unit}
-              </span>
+              <span className="text-lg sm:text-xl text-purple-700 capitalize tracking-wide">{unit}</span>
             </div>
           ))}
         </div>
