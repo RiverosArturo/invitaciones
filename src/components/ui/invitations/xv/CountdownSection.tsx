@@ -34,8 +34,9 @@ const CameraAdjuster = () => {
 
 const Background3D = () => (
   <Canvas
+    className="absolute inset-0 z-0 touch-none pointer-events-none"
+    style={{ touchAction: 'none', pointerEvents: 'none' }}
     camera={{ position: [0, 0, 3], fov: 75 }}
-    style={{ pointerEvents: 'none', touchAction: 'none' }}
   >
     <Suspense fallback={null}>
       <CameraAdjuster />
