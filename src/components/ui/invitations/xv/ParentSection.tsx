@@ -190,18 +190,18 @@ export const ParentsSection: React.FC<ParentsSectionProps> = ({
 
                         <div className="grid grid-cols-2 gap-8">
                             <div ref={parentsNamesRef} className="space-y-2">
-                                <p className="text-2xl font-['Dancing_Script'] text-purple-900 uppercase tracking-wide">
+                                <p className="text-xl font-['Dancing_Script'] text-purple-900 uppercase tracking-wide">
                                     {parentsTitle}
                                 </p>
-                                <p className="text-xl font-['Dancing_Script'] text-purple-700">{parent1Name}</p>
-                                <p className="text-xl font-['Dancing_Script'] text-purple-700">{parent2Name}</p>
+                                <p className="text-lg font-['Dancing_Script'] text-purple-700">{parent1Name}</p>
+                                <p className="text-lg font-['Dancing_Script'] text-purple-700">{parent2Name}</p>
                             </div>
                             <div ref={godparentsNamesRef} className="space-y-2">
-                                <p className="text-2xl font-['Dancing_Script'] text-purple-800 uppercase tracking-wide">
+                                <p className="text-xl font-['Dancing_Script'] text-purple-800 uppercase tracking-wide">
                                     {godparentsTitle}
                                 </p>
-                                <p className="text-xl font-['Dancing_Script'] text-purple-700">{godparent1Name}</p>
-                                <p className="text-xl font-['Dancing_Script'] text-purple-700">{godparent2Name}</p>
+                                <p className="text-lg font-['Dancing_Script'] text-purple-700">{godparent1Name}</p>
+                                <p className="text-lg font-['Dancing_Script'] text-purple-700">{godparent2Name}</p>
                             </div>
                         </div>
                     </div>
