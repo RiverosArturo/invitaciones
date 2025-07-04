@@ -33,7 +33,7 @@ const Background3D = () => (
             {/* <FancyFloatingObject /> */}
 
             {/* Controles de órbita para ver la escena desde diferentes ángulos (opcional para el usuario) */}
-            <OrbitControls enableZoom={false} enablePan={false} enableRotate={true} />
+            <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
         </Suspense>
     </Canvas>
 );
