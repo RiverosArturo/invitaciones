@@ -12,10 +12,17 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
-// 2. Metadata básica (ajústala más adelante)
+// 2. Metadata mejorada y con la configuración del viewport
 export const metadata: Metadata = {
-  title: "Invitaciones Personalizadas",
-  description: "Diseños únicos para eventos inolvidables",
+  title: "Invitaciones Personalizadas", // Esto se puede sobrescribir en pages.tsx
+  description: "Diseños únicos para eventos inolvidables", // Esto se puede sobrescribir en pages.tsx
+  // AÑADIR LA CONFIGURACIÓN DEL VIEWPORT AQUÍ
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1, // Esto evita que el usuario pueda hacer zoom in/out manualmente, lo cual es común para diseños fijos
+    userScalable: false, // Esto es explícito para evitar escalado por el usuario
+  },
 };
 
 export default function RootLayout({
