@@ -1,213 +1,175 @@
 'use client';
+import { useRef, useEffect } from 'react';
+import Image from 'next/image';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
+import { Dancing_Script, Montserrat } from 'next/font/google';
 
-import { Canvas, useThree } from '@react-three/fiber';
-import { OrbitControls, Sparkles } from '@react-three/drei';
-import gsap from 'gsap';
-import { Suspense, useRef, useState, useEffect } from 'react';
-import { useGSAP } from '@gsap/react';
-import * as THREE from 'three';
+const dancing_script = Dancing_Script({ subsets: ['latin'], weight: ['400', '700'] });
+const montserrat = Montserrat({ subsets: ['latin'], weight: ['300', '400', '700'] });
 
-interface ParentsSectionProps {
-    mainMessage?: string;
-    parentsTitle?: string;
-    parent1Name?: string;
-    parent2Name?: string;
-    godparentsTitle?: string;
-    godparent1Name?: string;
-    godparent2Name?: string;
-}
+gsap.registerPlugin(ScrollTrigger);
 
-const CameraAdjuster = () => {
-  const { camera, size } = useThree();
-  const isMobile = size.width < 768;
+export const ParentSection = () => {
+  const sectionOneRef = useRef(null);
+  const sectionTwoRef = useRef(null);
+
+  const refsOne = useRef<HTMLDivElement[]>([]);
+  const refsTwo = useRef<HTMLDivElement[]>([]);
+
+  const setRefOne = (el: HTMLDivElement | null) => {
+    if (el && !refsOne.current.includes(el)) refsOne.current.push(el);
+  };
+
+  const setRefTwo = (el: HTMLDivElement | null) => {
+    if (el && !refsTwo.current.includes(el)) refsTwo.current.push(el);
+  };
 
   useEffect(() => {
-    if (camera instanceof THREE.PerspectiveCamera) {
-      camera.position.z = isMobile ? 6 : 3;
-      camera.fov = isMobile ? 85 : 75;
-      camera.updateProjectionMatrix();
+    refsOne.current = [];
+    refsTwo.current = [];
+
+    const animateSection = (elements: HTMLDivElement[], trigger: Element) => {
+      gsap.from(elements, {
+        opacity: 0,
+        y: 60,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger,
+          start: 'top 85%',
+          end: 'bottom top',
+          toggleActions: 'play restart play reverse',
+        },
+      });
+    };
+
+    if (sectionOneRef.current) {
+      animateSection(refsOne.current, sectionOneRef.current);
     }
-  }, [isMobile, camera]);
 
-  return null;
-};
+    if (sectionTwoRef.current) {
+      animateSection(refsTwo.current, sectionTwoRef.current);
+    }
 
-export const Background3D = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [canRender, setCanRender] = useState(false);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const observer = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      if (width > 0 && height > 0) {
-        setCanRender(true);
-      }
-    });
-
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
+    return () => {
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
   }, []);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 z-0">
-      {canRender && (
-        <Canvas
-          className="pointer-events-none"
-          camera={{ position: [0, 0, 3], fov: 75 }}
-          style={{ touchAction: 'none', pointerEvents: 'none' }}
+    <>
+      {/* === PADRES === */}
+      <section
+        id="padres"
+        ref={sectionOneRef}
+        className="bg-gradient-to-b from-purple-300 to-purple-100 container mx-auto pt-20"
+      >
+        <div className="h-0.5 w-20 bg-purple-900/60 mx-auto mb-4" />
+        <h2
+          ref={setRefOne}
+          className={`text-4xl text-center text-purple-900 drop-shadow-lg ${dancing_script.className} pb-8`}
         >
-          <Suspense fallback={null}>
-            <CameraAdjuster />
-            <ambientLight intensity={0.6} />
-            <pointLight position={[10, 10, 10]} intensity={1.2} />
-            <pointLight position={[-10, -10, -10]} intensity={0.7} />
-            <Sparkles count={150} scale={5} size={1.5} speed={0.5} opacity={0.7} color="#FFD700" />
-            <Sparkles count={75} scale={3} size={1} speed={0.3} opacity={0.5} color="#FFFFFF" />
-            <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
-          </Suspense>
-        </Canvas>
-      )}
-    </div>
+          ¡Celebra con nosotros este día tan maravilloso!
+        </h2>
+
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          {/* Imagen */}
+          <div className="w-full md:w-1/2 px-4">
+            <div className="flex flex-col items-center">
+              <div
+                ref={setRefOne}
+                className="relative w-full max-w-sm h-[400px] md:h-[600px] overflow-hidden rounded-lg shadow-2xl"
+              >
+                <Image
+                  src="https://res.cloudinary.com/dsu3au60t/image/upload/v1751273323/padresYXV_fcez9e.jpg"
+                  alt="Imagen de Nuestros Padres"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Texto */}
+          <div
+            className="w-full md:w-1/2 flex flex-col justify-center items-center text-center space-y-6
+              bg-[url('https://res.cloudinary.com/dsu3au60t/image/upload/v1751933733/fondo3_vinplk.webp')]
+              bg-cover bg-center bg-no-repeat px-4 py-6"
+          >
+            <div ref={setRefOne}>
+              <p className={`text-3xl md:text-4xl text-purple-900 ${dancing_script.className}`}>Mis Padres</p>
+            </div>
+            <div
+              ref={setRefOne}
+              className="w-24 h-1 bg-purple-400 mx-auto md:mx-0 origin-left transform"
+            />
+            <div className="space-y-4" ref={setRefOne}>
+              <p className={`text-xl md:text-2xl text-purple-800 ${montserrat.className}`}>
+                María Antonia<br />
+                Fonseca Montero<br />
+                &amp;<br />
+                Víctor José<br />
+                Loranca Pérez
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* === PADRINOS === */}
+      <section
+        ref={sectionTwoRef}
+        className="bg-gradient-to-b from-purple-100 to-purple-300 container mx-auto px-4 py-20"
+      >
+        <div className="flex flex-col md:flex-row-reverse items-center justify-center gap-8">
+          {/* Imagen */}
+          <div className="w-full md:w-1/2">
+            <div className="flex flex-col items-center">
+              <div
+                ref={setRefTwo}
+                className="relative w-full max-w-sm h-[320px] md:h-[480px] overflow-hidden rounded-lg shadow-2xl"
+              >
+                <Image
+                  src="https://res.cloudinary.com/dsu3au60t/image/upload/v1751924708/nuevaXV_bejiz0.jpg"
+                  alt="Imagen de Nuestros Padrinos"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Texto */}
+          <div
+            className="w-full md:w-1/2 flex flex-col justify-center items-center text-center space-y-6
+              bg-[url('https://res.cloudinary.com/dsu3au60t/image/upload/v1751933733/fondo_mb37xs.webp')]
+              bg-cover bg-center bg-no-repeat px-4 py-6"
+          >
+            <div ref={setRefTwo}>
+              <p className={`text-3xl md:text-4xl text-purple-900 ${dancing_script.className}`}>Mis Padrinos</p>
+            </div>
+            <div
+              ref={setRefTwo}
+              className="w-24 h-1 bg-purple-400 mx-auto md:mx-0 origin-left transform"
+            />
+            <div className="space-y-4" ref={setRefTwo}>
+              <p className={`text-xl md:text-2xl text-purple-800 ${montserrat.className}`}>
+                Lucía Cristina<br />
+                Fragoso Martínez<br />
+                &amp;<br />
+                Martín<br />
+                Calderón Sánchez
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
-};
-export const ParentsSection: React.FC<ParentsSectionProps> = ({
-    mainMessage = "¡Celebra con nosotros este día tan maravilloso!",
-    parentsTitle = "Mis Padres",
-    parent1Name = "Fátima Guzmán",
-    parent2Name = "Sanrom Fabyo",
-    godparentsTitle = "Mis Padrinos",
-    godparent1Name = "Elida Navarro",
-    godparent2Name = "Carlos López",
-}) => {
-    const sectionRef = useRef<HTMLElement>(null);
-    const cardRef = useRef<HTMLDivElement>(null);
-    const titleRef = useRef<HTMLHeadingElement>(null);
-    const dividerRef = useRef<HTMLDivElement>(null);
-    const parentsNamesRef = useRef<HTMLDivElement>(null);
-    const godparentsNamesRef = useRef<HTMLDivElement>(null);
-    const [isVisible, setIsVisible] = useState(false);
-
-    useGSAP(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setIsVisible(true);
-
-                    gsap.fromTo(
-                        cardRef.current,
-                        {
-                            y: '-100%',
-                            opacity: 0,
-                            scaleY: 0.8,
-                            transformOrigin: 'top center',
-                        },
-                        {
-                            y: '0%',
-                            opacity: 1,
-                            scaleY: 1,
-                            duration: 1.2,
-                            ease: 'power3.out',
-                            delay: 0.3,
-                            onComplete: () => {
-                                gsap.from(titleRef.current, {
-                                    opacity: 0,
-                                    y: -20,
-                                    duration: 0.8,
-                                    ease: 'power2.out',
-                                });
-                                gsap.from(dividerRef.current, {
-                                    width: 0,
-                                    opacity: 0,
-                                    duration: 1,
-                                    ease: 'power2.out',
-                                    delay: 0.2,
-                                });
-                                gsap.from(parentsNamesRef.current?.children || '', {
-                                    opacity: 0,
-                                    y: 20,
-                                    stagger: 0.2,
-                                    duration: 0.8,
-                                    ease: 'power2.out',
-                                    delay: 0.4,
-                                });
-                                gsap.from(godparentsNamesRef.current?.children || '', {
-                                    opacity: 0,
-                                    y: 20,
-                                    stagger: 0.2,
-                                    duration: 0.8,
-                                    ease: 'power2.out',
-                                    delay: 0.6,
-                                });
-                            },
-                        }
-                    );
-
-                    observer.unobserve(entry.target);
-                }
-            },
-            { threshold: 0.3 }
-        );
-
-        if (sectionRef.current) observer.observe(sectionRef.current);
-        return () => observer.disconnect();
-    }, []);
-
-    return (
-        <section
-            id="padres"
-            ref={sectionRef}
-            className="relative min-h-screen w-full overflow-hidden font-['Montserrat'] bg-cover"
-            style={{
-                backgroundImage:
-                    'url(https://res.cloudinary.com/dsu3au60t/image/upload/v1751273323/padresYXV_fcez9e.jpg)',
-                backgroundPosition: 'center 1%',
-            }}
-        >
-            <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;900&family=Montserrat:wght@300;400;900&display=swap');
-      `}</style>
-
-            <div className="absolute inset-0 z-0">
-                <Background3D />
-            </div>
-
-            <div className="relative w-full z-10">
-                <div
-                    ref={cardRef}
-                    className={`relative mx-auto max-w-5xl px-8 pt-6 pb-16 text-center bg-gradient-to-b from-purple-300 to-purple-50 rounded-b-full shadow-xl transition-opacity duration-300 ${isVisible ? 'opacity-100 visible' : 'opacity-0 invisible'
-                        }`}
-                >
-                    <div className="space-y-4">
-                        <h2
-                            ref={titleRef}
-                            className="text-4xl text-center font-['Dancing_Script']  text-purple-900 drop-shadow-lg"
-                        >
-                            {mainMessage}
-                        </h2>
-                        <div ref={dividerRef} className="h-0.5 w-20 bg-purple-900/60 mx-auto" />
-
-                        <div className="grid grid-cols-2 gap-8">
-                            <div ref={parentsNamesRef} className="space-y-2">
-                                <p className="text-xl font-['Dancing_Script'] text-purple-900 uppercase tracking-wide">
-                                    {parentsTitle}
-                                </p>
-                                <p className="text-lg font-['Dancing_Script'] text-purple-700">{parent1Name}</p>
-                                <p className="text-lg font-['Dancing_Script'] text-purple-700">{parent2Name}</p>
-                            </div>
-                            <div ref={godparentsNamesRef} className="space-y-2">
-                                <p className="text-xl font-['Dancing_Script'] text-purple-800 uppercase tracking-wide">
-                                    {godparentsTitle}
-                                </p>
-                                <p className="text-lg font-['Dancing_Script'] text-purple-700">{godparent1Name}</p>
-                                <p className="text-lg font-['Dancing_Script'] text-purple-700">{godparent2Name}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="h-32 md:h-48"></div>
-            </div>
-        </section>
-    );
 };

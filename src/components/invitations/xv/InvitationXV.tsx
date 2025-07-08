@@ -4,7 +4,7 @@ import { GrGallery } from "react-icons/gr";
 import { BiDrink } from "react-icons/bi";
 import { GiMusicalScore, GiPartyPopper } from "react-icons/gi";
 import { Gift, HotelImage, ItineraryItem, LocationItem } from '@/interfaces';
-import { CountdownSection, DressCodeSection, GallerySection, GiftRegistrySection, GuestsSection, HeroSection, ItinerarySection, LocationsSection, LodgingSection, ParentsSection, RSVPSection, ShareOnSocialsSection } from '@/components';
+import { CountdownSection, DressCodeSection, GallerySection, GiftRegistrySection, GuestsSection, HeroSection, ItinerarySection, LocationsSection, LodgingSection, ParentSection, RSVPSection, ShareOnSocialsSection } from '@/components';
 
 
 
@@ -108,15 +108,7 @@ export const InvitationXV = () => {
             <HeroSection />
             <CountdownSection eventDate={new Date('2025-12-25T20:00:00')} backgroundImageSrc="https://res.cloudinary.com/dsu3au60t/image/upload/v1751073303/xva%C3%B1os_qazid8.jpg" />
             <GuestsSection guestName='Familia Garcia' passes={4} />
-            <ParentsSection
-                mainMessage="¡Celebra con nosotros este día tan maravilloso!"
-                parentsTitle="Mis Padres"
-                parent1Name="Fátima Guzmán"
-                parent2Name="Sanrom Fabyo"
-                godparentsTitle="Mis Padrinos"
-                godparent1Name="Elida Navarro"
-                godparent2Name="Carlos López"
-            />
+            <ParentSection />
             <ItinerarySection items={itineraryItems} />
             <LocationsSection locations={locations} />
             <LodgingSection images={hotelImages} />

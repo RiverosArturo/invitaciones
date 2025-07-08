@@ -24,31 +24,58 @@ const CameraAdjuster = () => {
   return null;
 };
 
-const FloatingSphere = () => {
-  const mesh = useRef<THREE.Mesh>(null!);
+// const FloatingSphere = () => {
+//   const mesh = useRef<THREE.Mesh>(null!);
+//   useFrame(({ clock }) => {
+//     const t = clock.getElapsedTime();
+//     if (mesh.current) {
+//       mesh.current.position.y = Math.sin(t * 0.4) * 0.8;
+//       mesh.current.rotation.y = t * 0.2;
+//     }
+//   });
+
+//   return (
+//     <Float floatIntensity={0.5} speed={1.5}>
+//       <mesh ref={mesh}>
+//         <sphereGeometry args={[1, 32, 32]} />
+//         <meshStandardMaterial
+//           color="#FFFACD"
+//           metalness={0.8}
+//           roughness={0.1}
+//           emissive="#FFFACD"
+//           emissiveIntensity={0.5}
+//         />
+//       </mesh>
+//     </Float>
+//   );
+// };
+
+const FloatingImage = ({ imageUrl }: { imageUrl: string }) => {
+  const texture = new THREE.TextureLoader().load(imageUrl);
+  const meshRef = useRef<THREE.Mesh>(null!);
+
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    if (mesh.current) {
-      mesh.current.position.y = Math.sin(t * 0.4) * 0.8;
-      mesh.current.rotation.y = t * 0.2;
+    if (meshRef.current) {
+      meshRef.current.position.y = Math.sin(t * 0.4) * 0.8;
+      // meshRef.current.rotation.y = t * 0.2;
     }
   });
 
   return (
-    <Float floatIntensity={0.5} speed={1.5}>
-      <mesh ref={mesh}>
-        <sphereGeometry args={[1, 32, 32]} />
+    <Float floatIntensity={0.8} speed={1.2}>
+      <mesh ref={meshRef}>
+        <planeGeometry args={[3, 3]} />
         <meshStandardMaterial
-          color="#FFFACD"
-          metalness={0.8}
-          roughness={0.1}
-          emissive="#FFFACD"
-          emissiveIntensity={0.5}
+          map={texture}
+          transparent
+          side={THREE.DoubleSide}
         />
       </mesh>
     </Float>
   );
 };
+
 
 export const HeroSection = () => {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -85,7 +112,7 @@ export const HeroSection = () => {
     <section
       id="inicio"
       ref={heroRef}
-      className="bg-gradient-to-br from-purple-50 to-purple-200 h-screen relative flex flex-col items-center justify-center text-purple-900 overflow-hidden p-6 py-24"
+      className="bg-gradient-to-br from-purple-50 to-purple-200 h-screen relative flex flex-col items-center justify-center text-purple-900 overflow-hidden p-6 pt-24"
     >
       <div className="z-10 text-center space-y-4 pt-12">
         <h1
@@ -123,7 +150,7 @@ export const HeroSection = () => {
           <directionalLight position={[3, 5, 2]} intensity={1.5} color="#FFD700" />
           <Sparkles count={100} scale={7} size={2.5} speed={0.7} opacity={0.9} color="#FFD700" />
           <Sparkles count={100} scale={5} size={2} speed={0.4} opacity={0.8} color="#FFFFFF" />
-          <FloatingSphere />
+          <FloatingImage imageUrl={'https://res.cloudinary.com/dsu3au60t/image/upload/v1751931907/xv_gaocsh.webp'} />
           <OrbitControls enablePan={false} enableZoom={false} enableRotate={false} />
         </Canvas>
       )}
