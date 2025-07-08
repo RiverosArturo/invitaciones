@@ -1,5 +1,6 @@
 'use client';
-import { useRef, useEffect } from 'react';
+
+import { useRef, useLayoutEffect } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
@@ -25,37 +26,30 @@ export const ParentSection = () => {
     if (el && !refsTwo.current.includes(el)) refsTwo.current.push(el);
   };
 
-  useEffect(() => {
-    refsOne.current = [];
-    refsTwo.current = [];
+  useLayoutEffect(() => {
+    ScrollTrigger.refresh();
+    refsOne.current = refsOne.current.filter(Boolean);
+    refsTwo.current = refsTwo.current.filter(Boolean);
 
-    const animateSection = (elements: HTMLDivElement[], trigger: Element) => {
+    const animate = (elements: HTMLDivElement[], trigger: Element) => {
       gsap.from(elements, {
         opacity: 0,
         y: 60,
-        duration: 0.8,
+        duration: 1,
         stagger: 0.2,
         ease: 'power2.out',
         scrollTrigger: {
           trigger,
-          start: 'top 85%',
-          end: 'bottom top',
-          toggleActions: 'play restart play reverse',
+          start: 'top 80%',
+          toggleActions: 'restart none none none',
         },
       });
     };
 
-    if (sectionOneRef.current) {
-      animateSection(refsOne.current, sectionOneRef.current);
-    }
+    if (sectionOneRef.current) animate(refsOne.current, sectionOneRef.current);
+    if (sectionTwoRef.current) animate(refsTwo.current, sectionTwoRef.current);
 
-    if (sectionTwoRef.current) {
-      animateSection(refsTwo.current, sectionTwoRef.current);
-    }
-
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
+    return () => ScrollTrigger.getAll().forEach(t => t.kill());
   }, []);
 
   return (
